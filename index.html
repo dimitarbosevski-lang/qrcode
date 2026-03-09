@@ -3,22 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ForgeQR Studio - Advanced QR Generator</title>
-  <meta name="description" content="Advanced QR generator with multi-type payloads, frames, logos, dot and corner styling, gradients, and export options." />
+  <title>IWConnect QR Code Generator</title>
+  <meta name="description" content="IWConnect QR Code Generator with advanced payload types, custom frames, logo upload, shape controls, and export options." />
   <style>
-    @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@500;700&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Sora:wght@600;700&display=swap");
 
     :root {
-      --bg: #f4efe7;
-      --card: #fffdf8;
-      --ink: #101319;
-      --muted: #5f6773;
-      --accent: #c3492b;
-      --accent-2: #006f62;
-      --line: #d9d3c8;
-      --focus: rgba(195, 73, 43, 0.28);
+      --bg: #f3f5f9;
+      --card: #ffffff;
+      --ink: #121319;
+      --muted: #5d6470;
+      --accent: #cf0018;
+      --accent-2: #101319;
+      --line: #d9dde5;
+      --focus: rgba(207, 0, 24, 0.22);
       --radius: 16px;
-      --shadow: 0 22px 50px rgba(16, 19, 25, 0.13);
+      --shadow: 0 18px 42px rgba(16, 19, 25, 0.12);
     }
 
     * {
@@ -27,18 +27,92 @@
 
     body {
       margin: 0;
-      font-family: "Space Grotesk", sans-serif;
+      font-family: "Poppins", sans-serif;
       background:
-        radial-gradient(1200px 700px at -10% -20%, rgba(0, 111, 98, 0.12), transparent),
-        radial-gradient(900px 600px at 110% 0%, rgba(195, 73, 43, 0.15), transparent),
+        radial-gradient(920px 560px at -5% -20%, rgba(207, 0, 24, 0.11), transparent),
+        radial-gradient(980px 560px at 110% 0%, rgba(16, 19, 25, 0.07), transparent),
         var(--bg);
       color: var(--ink);
       min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .site-header {
+      width: min(1400px, calc(100% - 32px));
+      margin: 10px auto 0;
+      min-height: 58px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 10px 24px rgba(16, 19, 25, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .brand-link {
+      color: inherit;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .logo-mark {
+      width: 166px;
+      height: 42px;
+      display: block;
+      flex: 0 0 auto;
+      object-fit: contain;
+    }
+
+    .header-meta {
+      text-align: right;
+      min-width: 0;
+    }
+
+    .header-meta .product {
+      margin: 0;
+      font-family: "Sora", sans-serif;
+      font-size: 0.92rem;
+      letter-spacing: 0.01em;
+    }
+
+    .header-meta .tiny {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.74rem;
+      white-space: nowrap;
+    }
+
+    .site-footer {
+      width: min(1400px, calc(100% - 32px));
+      margin: 0 auto 10px;
+      min-height: 44px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.74rem;
+    }
+
+    .site-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
     }
 
     .shell {
       width: min(1400px, calc(100% - 32px));
-      margin: 18px auto;
+      margin: 10px auto;
       display: grid;
       grid-template-columns: minmax(560px, 1.15fr) minmax(340px, 0.85fr);
       gap: 16px;
@@ -259,10 +333,10 @@
     .frame-btn.active,
     .logo-btn.active,
     .preset-btn.active {
-      border-color: var(--accent-2);
-      color: var(--accent-2);
-      background: #effaf7;
-      box-shadow: inset 0 0 0 1px rgba(0, 111, 98, 0.2);
+      border-color: var(--accent);
+      color: var(--accent);
+      background: #fff2f4;
+      box-shadow: inset 0 0 0 1px rgba(207, 0, 24, 0.2);
     }
 
     .preview {
@@ -289,7 +363,7 @@
     }
 
     .preview-stage-wrap {
-      background: linear-gradient(180deg, #fff, #f7f4ed);
+      background: linear-gradient(180deg, #fff, #f5f6fb);
       border: 1px solid var(--line);
       border-radius: 22px;
       padding: 16px;
@@ -375,6 +449,26 @@
       border-radius: 0;
     }
 
+    .preview-stage-wrap.show-transparency {
+      background:
+        linear-gradient(180deg, #ffffff, #f8f8f8),
+        repeating-conic-gradient(#e4e7ed 0% 25%, #ffffff 0% 50%) 50% / 18px 18px;
+      background-blend-mode: multiply;
+    }
+
+    .preview-stage.transparent-output .qr-shell {
+      background: transparent;
+    }
+
+    .preview-stage.transparent-output {
+      background: transparent;
+    }
+
+    .preview-stage.transparent-output.frame-ticket::before,
+    .preview-stage.transparent-output.frame-ticket::after {
+      background: transparent;
+    }
+
     .frame-classic {
       --pad: 16px;
       --frame-bg: #fff;
@@ -391,22 +485,22 @@
 
     .frame-neon {
       --pad: 18px;
-      --frame-bg: linear-gradient(145deg, #f0fcff, #f8fff7);
-      --frame-border: #006f62;
+      --frame-bg: linear-gradient(145deg, #ffffff, #f6f7fb);
+      --frame-border: #cf0018;
       --frame-radius: 26px;
       border-width: 6px;
     }
 
     .frame-neon .banner-top {
       display: inline-flex;
-      background: #006f62;
+      background: #101319;
       color: #fff;
     }
 
     .frame-ticket {
       --pad: 20px;
-      --frame-bg: #fff8eb;
-      --frame-border: #c3492b;
+      --frame-bg: #ffffff;
+      --frame-border: #cf0018;
       --frame-radius: 14px;
     }
 
@@ -418,7 +512,7 @@
       height: 22px;
       border-radius: 50%;
       background: var(--bg);
-      border: 3px solid #c3492b;
+      border: 3px solid #cf0018;
       top: calc(50% - 11px);
     }
 
@@ -432,7 +526,7 @@
 
     .frame-ticket .banner-bottom {
       display: inline-flex;
-      background: #c3492b;
+      background: #cf0018;
       color: #fff;
     }
 
@@ -486,8 +580,8 @@
 
     .frame-badge {
       --pad: 18px;
-      --frame-bg: radial-gradient(circle at 20% 15%, #fff6f0 0%, #ffffff 56%);
-      --frame-border: #c3492b;
+      --frame-bg: radial-gradient(circle at 20% 15%, #fff5f7 0%, #ffffff 56%);
+      --frame-border: #cf0018;
       --frame-radius: 20px;
       border-width: 5px;
     }
@@ -495,8 +589,8 @@
     .frame-badge .banner-bottom {
       display: inline-flex;
       background: #ffffff;
-      color: #c3492b;
-      border: 2px solid #c3492b;
+      color: #cf0018;
+      border: 2px solid #cf0018;
       font-size: 0.7rem;
       letter-spacing: 0.1em;
     }
@@ -517,6 +611,11 @@
         grid-template-columns: 1fr;
       }
 
+      .site-header,
+      .site-footer {
+        width: min(1400px, calc(100% - 14px));
+      }
+
       .preview {
         position: static;
       }
@@ -530,6 +629,24 @@
       .shell {
         width: min(1400px, calc(100% - 14px));
         margin: 8px auto 16px;
+      }
+
+      .site-header {
+        min-height: 52px;
+        padding: 8px 10px;
+      }
+
+      .logo-mark {
+        width: 118px;
+        height: 30px;
+      }
+
+      .header-meta .tiny {
+        display: none;
+      }
+
+      .site-footer {
+        padding: 7px 10px;
       }
 
       .controls,
@@ -552,12 +669,26 @@
   </style>
 </head>
 <body>
+  <header class="site-header">
+    <a class="brand-link" href="https://iwconnect.com/" target="_blank" rel="noreferrer noopener">
+      <img
+        class="logo-mark"
+        src="https://iwconnect.com/wp-content/uploads/2024/10/Asset-1@2x.png"
+        alt="IWConnect logo"
+      />
+    </a>
+    <div class="header-meta">
+      <p class="product">QR Code Generator</p>
+      <p class="tiny">IWConnect brand edition</p>
+    </div>
+  </header>
+
   <main class="shell">
     <section class="panel controls">
       <header class="header">
         <div>
-          <h1 class="title">ForgeQR Studio</h1>
-          <p class="subtitle">Advanced QR generator with payload, frame, logo, shape and export controls.</p>
+          <h1 class="title">IWConnect QR Code Generator</h1>
+          <p class="subtitle">Advanced payloads, branded frames, logo embedding, shape controls, and share-ready exports.</p>
         </div>
         <div class="top-actions">
           <button class="btn" id="resetBtn" type="button">Reset</button>
@@ -641,7 +772,7 @@
           </div>
           <div>
             <label class="label" for="foregroundColor">QR color</label>
-            <input id="foregroundColor" type="color" value="#111111" />
+            <input id="foregroundColor" type="color" value="#cf0018" />
           </div>
           <div>
             <label class="label" for="backgroundColor">Background</label>
@@ -650,16 +781,16 @@
         </div>
 
         <div style="height: 8px"></div>
-        <label class="check"><input id="gradientEnabled" type="checkbox" />Use gradient color</label>
+        <label class="check"><input id="gradientEnabled" type="checkbox" checked />Use gradient color</label>
         <div style="height: 8px"></div>
         <div class="grid">
           <div>
             <label class="label" for="gradientStart">Gradient start</label>
-            <input id="gradientStart" type="color" value="#111111" />
+            <input id="gradientStart" type="color" value="#101319" />
           </div>
           <div>
             <label class="label" for="gradientEnd">Gradient end</label>
-            <input id="gradientEnd" type="color" value="#c3492b" />
+            <input id="gradientEnd" type="color" value="#cf0018" />
           </div>
           <div>
             <label class="label" for="gradientType">Gradient type</label>
@@ -711,7 +842,7 @@
         <span class="muted" id="payloadBytes">0 chars</span>
       </div>
 
-      <div class="preview-stage-wrap">
+      <div class="preview-stage-wrap" id="previewStageWrap">
         <div class="preview-stage frame-classic" id="previewStage">
           <div class="banner-top" id="bannerTop"></div>
           <div class="qr-shell">
@@ -730,12 +861,17 @@
     </aside>
   </main>
 
+  <footer class="site-footer">
+    <span>IWConnect QR Code Generator</span>
+    <a href="https://iwconnect.com/" target="_blank" rel="noreferrer noopener">iwconnect.com</a>
+  </footer>
+
   <script type="module">
     const statusLine = document.getElementById("statusLine");
 
     function setStatus(message, isError = false) {
       statusLine.textContent = message;
-      statusLine.style.color = isError ? "#af2525" : "#5f6773";
+      statusLine.style.color = isError ? "#cf0018" : "#5f6773";
     }
 
     let QRCodeStyling;
@@ -752,7 +888,7 @@
         fields: [
           { id: "text", label: "Text", type: "textarea", placeholder: "Write any plain text" }
         ],
-        defaults: { text: "Welcome to ForgeQR Studio" },
+        defaults: { text: "Welcome to IWConnect QR Code Generator" },
         build: (v) => v.text || ""
       },
       url: {
@@ -760,7 +896,7 @@
         fields: [
           { id: "url", label: "URL", type: "url", placeholder: "https://example.com" }
         ],
-        defaults: { url: "https://www.example.com" },
+        defaults: { url: "https://iwconnect.com/" },
         build: (v) => normalizeUrl(v.url)
       },
       email: {
@@ -871,7 +1007,7 @@
           return [
             "BEGIN:VCALENDAR",
             "VERSION:2.0",
-            "PRODID:-//ForgeQR//EN",
+            "PRODID:-//IWConnectQR//EN",
             "BEGIN:VEVENT",
             `SUMMARY:${v.title || "Event"}`,
             `LOCATION:${v.location || ""}`,
@@ -889,7 +1025,7 @@
           { id: "phone", label: "WhatsApp number", type: "text", placeholder: "15550101234" },
           { id: "message", label: "Prefilled message", type: "textarea", placeholder: "Hi, I scanned your QR" }
         ],
-        defaults: { phone: "15550101234", message: "Hello from ForgeQR" },
+        defaults: { phone: "15550101234", message: "Hello from IWConnect" },
         build: (v) => `https://wa.me/${digitsOnly(v.phone || "")}?text=${enc(v.message || "")}`
       },
       geo: {
@@ -909,20 +1045,22 @@
 
     const framePresets = [
       { key: "none", label: "No Frame", top: "", bottom: "" },
-      { key: "classic", label: "Classic Scan", top: "", bottom: "SCAN ME" },
-      { key: "neon", label: "Neon Card", top: "OPEN NOW", bottom: "" },
-      { key: "ticket", label: "Ticket", top: "", bottom: "ENTRY PASS" },
+      { key: "classic", label: "Classic Scan", top: "", bottom: "SCAN NOW" },
+      { key: "neon", label: "Campaign Card", top: "OPEN NOW", bottom: "" },
+      { key: "ticket", label: "Pass Ticket", top: "", bottom: "ENTRY PASS" },
       { key: "device", label: "Device", top: "", bottom: "tap to open" },
       { key: "focus", label: "Focus Box", top: "AIM CAMERA", bottom: "" },
-      { key: "badge", label: "Brand Badge", top: "", bottom: "SCAN TO VIEW" }
+      { key: "badge", label: "IW Badge", top: "", bottom: "SCAN TO VIEW" }
     ];
 
     const logoPresets = [
       { key: "none", label: "No Logo", data: "" },
-      { key: "scan", label: "SCAN", data: svgLogo("SCAN", "#ffffff", "#101319") },
-      { key: "link", label: "LINK", data: svgLogo("LINK", "#ffffff", "#006f62") },
-      { key: "wifi", label: "WIFI", data: svgLogo("WIFI", "#ffffff", "#c3492b") },
-      { key: "menu", label: "MENU", data: svgLogo("MENU", "#ffffff", "#2c2f36") }
+      { key: "iw", label: "IW Main", data: "https://iwconnect.com/wp-content/uploads/2024/10/Asset-1@2x.png" },
+      {
+        key: "iw-transparent",
+        label: "IW Transparent",
+        data: "https://media.glassdoor.com/sqll/2466929/interworks-republic-of-macedonia-squareLogo-1617969232693.png"
+      }
     ];
 
     const quickPresets = [
@@ -937,9 +1075,10 @@
           state.cornerSquareStyle = "extra-rounded";
           state.cornerDotStyle = "dot";
           state.foregroundColor = "#111111";
-          state.backgroundColor = "#fff8eb";
+          state.backgroundColor = "#ffffff";
           state.gradientEnabled = false;
-          state.logoData = logoPresets.find((x) => x.key === "menu").data;
+          state.logoData = logoPresets.find((x) => x.key === "iw").data;
+          state.selectedLogoKey = "iw";
         }
       },
       {
@@ -955,9 +1094,10 @@
           state.cornerSquareStyle = "dot";
           state.cornerDotStyle = "dot";
           state.gradientEnabled = true;
-          state.gradientStart = "#0e3f37";
-          state.gradientEnd = "#00b497";
-          state.logoData = logoPresets.find((x) => x.key === "wifi").data;
+          state.gradientStart = "#101319";
+          state.gradientEnd = "#cf0018";
+          state.logoData = logoPresets.find((x) => x.key === "iw-transparent").data;
+          state.selectedLogoKey = "iw-transparent";
         }
       },
       {
@@ -971,8 +1111,11 @@
           state.cornerDotStyle = "square";
           state.foregroundColor = "#1f2430";
           state.backgroundColor = "#ffffff";
-          state.gradientEnabled = false;
-          state.logoData = logoPresets.find((x) => x.key === "link").data;
+          state.gradientEnabled = true;
+          state.gradientStart = "#101319";
+          state.gradientEnd = "#cf0018";
+          state.logoData = logoPresets.find((x) => x.key === "iw").data;
+          state.selectedLogoKey = "iw";
         }
       },
       {
@@ -987,9 +1130,10 @@
           state.gradientEnabled = true;
           state.gradientType = "linear";
           state.gradientRotation = 130;
-          state.gradientStart = "#2f2c76";
-          state.gradientEnd = "#e03c6b";
-          state.logoData = logoPresets.find((x) => x.key === "scan").data;
+          state.gradientStart = "#101319";
+          state.gradientEnd = "#cf0018";
+          state.logoData = logoPresets.find((x) => x.key === "iw").data;
+          state.selectedLogoKey = "iw";
         }
       }
     ];
@@ -1005,21 +1149,21 @@
       cornerSquareStyle: "extra-rounded",
       cornerDotStyle: "dot",
       errorLevel: "Q",
-      foregroundColor: "#111111",
+      foregroundColor: "#cf0018",
       backgroundColor: "#ffffff",
-      gradientEnabled: false,
-      gradientStart: "#111111",
-      gradientEnd: "#c3492b",
+      gradientEnabled: true,
+      gradientStart: "#101319",
+      gradientEnd: "#cf0018",
       gradientType: "linear",
       gradientRotation: 45,
       size: 800,
       margin: 12,
       transparentBackground: false,
-      logoData: logoPresets.find((x) => x.key === "scan").data,
+      logoData: logoPresets.find((x) => x.key === "iw-transparent").data,
       logoSize: 26,
       logoMargin: 4,
       hideBackgroundDots: true,
-      selectedLogoKey: "scan"
+      selectedLogoKey: "iw-transparent"
     };
 
     const refs = {
@@ -1029,6 +1173,7 @@
       logoButtons: document.getElementById("logoButtons"),
       presetButtons: document.getElementById("presetButtons"),
       payloadBytes: document.getElementById("payloadBytes"),
+      previewStageWrap: document.getElementById("previewStageWrap"),
       previewStage: document.getElementById("previewStage"),
       bannerTop: document.getElementById("bannerTop"),
       bannerBottom: document.getElementById("bannerBottom")
@@ -1037,7 +1182,7 @@
     const qrCode = new QRCodeStyling({
       width: state.size,
       height: state.size,
-      data: "https://www.example.com",
+      data: "https://iwconnect.com/",
       margin: state.margin,
       qrOptions: { errorCorrectionLevel: state.errorLevel },
       dotsOptions: { type: state.dotStyle, color: state.foregroundColor },
@@ -1317,7 +1462,8 @@
     }
 
     function applyFrameToPreview() {
-      refs.previewStage.className = `preview-stage frame-${state.frame}`;
+      refs.previewStage.className = `preview-stage frame-${state.frame}${state.transparentBackground ? " transparent-output" : ""}`;
+      refs.previewStageWrap.classList.toggle("show-transparency", state.transparentBackground);
       const frame = framePresets.find((f) => f.key === state.frame) || framePresets[0];
       refs.bannerTop.textContent = frame.top;
       refs.bannerBottom.textContent = frame.bottom;
@@ -1388,7 +1534,7 @@
 
     async function downloadCurrent() {
       const format = document.getElementById("exportFormat").value;
-      const fileBase = `forgeqr-${state.type}-${state.frame}`;
+      const fileBase = `iwconnect-qr-${state.type}-${state.frame}`;
 
       try {
         if (format === "svg" && state.frame === "none") {
@@ -1435,15 +1581,17 @@
     async function composeFramedImage(rawQrBlob, frame, format) {
       const image = await blobToImage(rawQrBlob);
       const size = image.width;
+      const allowAlpha = format !== "jpeg";
+      const transparentOutput = state.transparentBackground && allowAlpha;
 
       const layoutByFrame = {
-        none: { pad: 0, top: 0, bottom: 0, border: 0, bg: state.transparentBackground ? null : state.backgroundColor },
-        classic: { pad: 32, top: 10, bottom: 70, border: 8, bg: "#ffffff" },
-        neon: { pad: 38, top: 56, bottom: 20, border: 10, bg: "#f4fffb" },
-        ticket: { pad: 34, top: 12, bottom: 72, border: 8, bg: "#fff8eb" },
-        device: { pad: 50, top: 24, bottom: 56, border: 20, bg: "#12161c" },
-        focus: { pad: 36, top: 52, bottom: 18, border: 6, bg: "#ffffff" },
-        badge: { pad: 36, top: 16, bottom: 68, border: 10, bg: "#fff7f1" }
+        none: { pad: 0, top: 0, bottom: 0, border: 0, bg: transparentOutput ? null : state.backgroundColor },
+        classic: { pad: 32, top: 10, bottom: 70, border: 8, bg: transparentOutput ? null : "#ffffff" },
+        neon: { pad: 38, top: 56, bottom: 20, border: 10, bg: transparentOutput ? null : "#fafbfe" },
+        ticket: { pad: 34, top: 12, bottom: 72, border: 8, bg: transparentOutput ? null : "#ffffff" },
+        device: { pad: 50, top: 24, bottom: 56, border: 20, bg: transparentOutput ? null : "#12161c" },
+        focus: { pad: 36, top: 52, bottom: 18, border: 6, bg: transparentOutput ? null : "#ffffff" },
+        badge: { pad: 36, top: 16, bottom: 68, border: 10, bg: transparentOutput ? null : "#ffffff" }
       };
 
       const l = layoutByFrame[frame] || layoutByFrame.none;
@@ -1464,7 +1612,7 @@
       const qrY = l.pad + l.top;
 
       if (frame !== "none") {
-        drawFrame(ctx, frame, { x: 0, y: 0, w, h, qrX, qrY, size, l });
+        drawFrame(ctx, frame, { x: 0, y: 0, w, h, qrX, qrY, size, l, transparentOutput });
       }
 
       ctx.drawImage(image, qrX, qrY, size, size);
@@ -1476,22 +1624,22 @@
     function drawFrame(ctx, frame, b) {
       if (frame === "classic") {
         strokeRoundedRect(ctx, b.qrX - 18, b.qrY - 18, b.size + 36, b.size + 36, 18, "#101319", 8);
-        drawPill(ctx, b.w / 2 - 120, b.h - 58, 240, 40, "#101319", "SCAN ME", "#ffffff");
+        drawPill(ctx, b.w / 2 - 120, b.h - 58, 240, 40, "#101319", "SCAN NOW", "#ffffff");
       }
 
       if (frame === "neon") {
-        strokeRoundedRect(ctx, b.qrX - 22, b.qrY - 22, b.size + 44, b.size + 44, 34, "#006f62", 10);
-        drawPill(ctx, b.w / 2 - 128, 14, 256, 40, "#006f62", "OPEN NOW", "#ffffff");
+        strokeRoundedRect(ctx, b.qrX - 22, b.qrY - 22, b.size + 44, b.size + 44, 34, "#cf0018", 10);
+        drawPill(ctx, b.w / 2 - 128, 14, 256, 40, "#101319", "OPEN NOW", "#ffffff");
       }
 
       if (frame === "ticket") {
-        strokeRoundedRect(ctx, b.qrX - 18, b.qrY - 18, b.size + 36, b.size + 36, 16, "#c3492b", 8);
-        ctx.fillStyle = "#fff8eb";
+        strokeRoundedRect(ctx, b.qrX - 18, b.qrY - 18, b.size + 36, b.size + 36, 16, "#cf0018", 8);
+        ctx.fillStyle = b.transparentOutput ? "rgba(0,0,0,0)" : "#f3f5f9";
         ctx.beginPath();
         ctx.arc(8, b.h / 2, 18, 0, Math.PI * 2);
         ctx.arc(b.w - 8, b.h / 2, 18, 0, Math.PI * 2);
         ctx.fill();
-        drawPill(ctx, b.w / 2 - 138, b.h - 58, 276, 40, "#c3492b", "ENTRY PASS", "#ffffff");
+        drawPill(ctx, b.w / 2 - 138, b.h - 58, 276, 40, "#cf0018", "ENTRY PASS", "#ffffff");
       }
 
       if (frame === "device") {
@@ -1509,8 +1657,8 @@
       }
 
       if (frame === "badge") {
-        strokeRoundedRect(ctx, b.qrX - 20, b.qrY - 20, b.size + 40, b.size + 40, 28, "#c3492b", 10);
-        drawPill(ctx, b.w / 2 - 144, b.h - 58, 288, 40, "#ffffff", "SCAN TO VIEW", "#c3492b", "#c3492b");
+        strokeRoundedRect(ctx, b.qrX - 20, b.qrY - 20, b.size + 40, b.size + 40, 28, "#cf0018", 10);
+        drawPill(ctx, b.w / 2 - 144, b.h - 58, 288, 40, "#ffffff", "SCAN TO VIEW", "#cf0018", "#cf0018");
       }
     }
 
@@ -1547,7 +1695,7 @@
         strokeRoundedRect(ctx, x, y, w, h, h / 2, stroke, 3);
       }
       ctx.fillStyle = textColor;
-      ctx.font = `${Math.floor(h * 0.42)}px Space Grotesk`;
+      ctx.font = `${Math.floor(h * 0.42)}px Poppins`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(String(text).toUpperCase(), x + w / 2, y + h / 2 + 1);
@@ -1561,21 +1709,21 @@
         cornerSquareStyle: "extra-rounded",
         cornerDotStyle: "dot",
         errorLevel: "Q",
-        foregroundColor: "#111111",
+        foregroundColor: "#cf0018",
         backgroundColor: "#ffffff",
-        gradientEnabled: false,
-        gradientStart: "#111111",
-        gradientEnd: "#c3492b",
+        gradientEnabled: true,
+        gradientStart: "#101319",
+        gradientEnd: "#cf0018",
         gradientType: "linear",
         gradientRotation: 45,
         size: 800,
         margin: 12,
         transparentBackground: false,
-        logoData: logoPresets.find((x) => x.key === "scan").data,
+        logoData: logoPresets.find((x) => x.key === "iw-transparent").data,
         logoSize: 26,
         logoMargin: 4,
         hideBackgroundDots: true,
-        selectedLogoKey: "scan"
+        selectedLogoKey: "iw-transparent"
       });
 
       for (const key of Object.keys(valuesByType)) {
@@ -1625,7 +1773,7 @@
 
     function normalizeUrl(url) {
       if (!url) {
-        return "https://example.com";
+        return "https://iwconnect.com/";
       }
       const raw = url.trim();
       if (/^[a-zA-Z]+:/.test(raw)) {
@@ -1726,12 +1874,6 @@
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-    }
-
-    function svgLogo(text, bg, fg) {
-      const safe = String(text).toUpperCase().slice(0, 6);
-      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'><rect width='320' height='320' rx='54' fill='${bg}'/><rect x='14' y='14' width='292' height='292' rx='44' fill='none' stroke='${fg}' stroke-width='10'/><text x='160' y='176' text-anchor='middle' font-family='Verdana, sans-serif' font-size='72' font-weight='700' fill='${fg}'>${safe}</text></svg>`;
-      return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
     }
 
     function escapeHtml(value) {
