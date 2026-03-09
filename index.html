@@ -1055,7 +1055,6 @@
 
     const logoPresets = [
       { key: "none", label: "No Logo", data: "" },
-      { key: "iw", label: "IW Main", data: "https://iwconnect.com/wp-content/uploads/2024/10/Asset-1@2x.png" },
       {
         key: "iw-transparent",
         label: "IW Transparent",
@@ -1077,8 +1076,8 @@
           state.foregroundColor = "#111111";
           state.backgroundColor = "#ffffff";
           state.gradientEnabled = false;
-          state.logoData = logoPresets.find((x) => x.key === "iw").data;
-          state.selectedLogoKey = "iw";
+          state.logoData = logoPresets.find((x) => x.key === "iw-transparent").data;
+          state.selectedLogoKey = "iw-transparent";
         }
       },
       {
@@ -1114,8 +1113,8 @@
           state.gradientEnabled = true;
           state.gradientStart = "#101319";
           state.gradientEnd = "#cf0018";
-          state.logoData = logoPresets.find((x) => x.key === "iw").data;
-          state.selectedLogoKey = "iw";
+          state.logoData = logoPresets.find((x) => x.key === "iw-transparent").data;
+          state.selectedLogoKey = "iw-transparent";
         }
       },
       {
@@ -1132,8 +1131,8 @@
           state.gradientRotation = 130;
           state.gradientStart = "#101319";
           state.gradientEnd = "#cf0018";
-          state.logoData = logoPresets.find((x) => x.key === "iw").data;
-          state.selectedLogoKey = "iw";
+          state.logoData = logoPresets.find((x) => x.key === "iw-transparent").data;
+          state.selectedLogoKey = "iw-transparent";
         }
       }
     ];
