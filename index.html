@@ -721,11 +721,11 @@
         <div class="grid">
           <div>
             <label class="label" for="logoSize">Logo size (%)</label>
-            <input id="logoSize" type="range" min="10" max="55" value="26" />
+            <input id="logoSize" type="range" min="10" max="55" value="55" />
           </div>
           <div>
             <label class="label" for="logoMargin">Logo margin</label>
-            <input id="logoMargin" type="range" min="0" max="20" value="4" />
+            <input id="logoMargin" type="range" min="0" max="20" value="15" />
           </div>
         </div>
         <div style="height: 8px"></div>
@@ -739,8 +739,8 @@
             <label class="label" for="dotStyle">Dot shape</label>
             <select id="dotStyle">
               <option value="square">Square</option>
-              <option value="dots">Dots</option>
-              <option value="rounded" selected>Rounded</option>
+              <option value="dots" selected>Dots</option>
+              <option value="rounded">Rounded</option>
               <option value="classy">Classy</option>
               <option value="classy-rounded">Classy Rounded</option>
               <option value="extra-rounded">Extra Rounded</option>
@@ -750,8 +750,8 @@
             <label class="label" for="cornerSquareStyle">Finder box shape</label>
             <select id="cornerSquareStyle">
               <option value="square">Square</option>
-              <option value="dot">Dot</option>
-              <option value="extra-rounded" selected>Extra Rounded</option>
+              <option value="dot" selected>Dot</option>
+              <option value="extra-rounded">Extra Rounded</option>
             </select>
           </div>
           <div>
@@ -786,7 +786,7 @@
         <div class="grid">
           <div>
             <label class="label" for="gradientStart">Gradient start</label>
-            <input id="gradientStart" type="color" value="#101319" />
+            <input id="gradientStart" type="color" value="#4f1024" />
           </div>
           <div>
             <label class="label" for="gradientEnd">Gradient end</label>
@@ -1143,15 +1143,15 @@
 
     const state = {
       type: "url",
-      frame: "classic",
-      dotStyle: "rounded",
-      cornerSquareStyle: "extra-rounded",
+      frame: "badge",
+      dotStyle: "dots",
+      cornerSquareStyle: "dot",
       cornerDotStyle: "dot",
       errorLevel: "Q",
       foregroundColor: "#cf0018",
       backgroundColor: "#ffffff",
       gradientEnabled: true,
-      gradientStart: "#101319",
+      gradientStart: "#4f1024",
       gradientEnd: "#cf0018",
       gradientType: "linear",
       gradientRotation: 45,
@@ -1159,8 +1159,8 @@
       margin: 12,
       transparentBackground: false,
       logoData: logoPresets.find((x) => x.key === "iw-transparent").data,
-      logoSize: 26,
-      logoMargin: 4,
+      logoSize: 55,
+      logoMargin: 15,
       hideBackgroundDots: true,
       selectedLogoKey: "iw-transparent"
     };
@@ -1585,12 +1585,12 @@
 
       const layoutByFrame = {
         none: { pad: 0, top: 0, bottom: 0, border: 0, bg: transparentOutput ? null : state.backgroundColor },
-        classic: { pad: 32, top: 10, bottom: 70, border: 8, bg: transparentOutput ? null : "#ffffff" },
-        neon: { pad: 38, top: 56, bottom: 20, border: 10, bg: transparentOutput ? null : "#fafbfe" },
-        ticket: { pad: 34, top: 12, bottom: 72, border: 8, bg: transparentOutput ? null : "#ffffff" },
-        device: { pad: 50, top: 24, bottom: 56, border: 20, bg: transparentOutput ? null : "#12161c" },
-        focus: { pad: 36, top: 52, bottom: 18, border: 6, bg: transparentOutput ? null : "#ffffff" },
-        badge: { pad: 36, top: 16, bottom: 68, border: 10, bg: transparentOutput ? null : "#ffffff" }
+        classic: { pad: 32, top: 10, bottom: 30, border: 8, bg: transparentOutput ? null : state.backgroundColor },
+        neon: { pad: 38, top: 34, bottom: 16, border: 10, bg: transparentOutput ? null : state.backgroundColor },
+        ticket: { pad: 34, top: 12, bottom: 32, border: 8, bg: transparentOutput ? null : state.backgroundColor },
+        device: { pad: 50, top: 20, bottom: 24, border: 20, bg: transparentOutput ? null : "#12161c" },
+        focus: { pad: 36, top: 32, bottom: 16, border: 6, bg: transparentOutput ? null : state.backgroundColor },
+        badge: { pad: 36, top: 16, bottom: 34, border: 10, bg: transparentOutput ? null : state.backgroundColor }
       };
 
       const l = layoutByFrame[frame] || layoutByFrame.none;
@@ -1622,42 +1622,48 @@
 
     function drawFrame(ctx, frame, b) {
       if (frame === "classic") {
-        strokeRoundedRect(ctx, b.qrX - 18, b.qrY - 18, b.size + 36, b.size + 36, 18, "#101319", 8);
-        drawPill(ctx, b.w / 2 - 120, b.h - 58, 240, 40, "#101319", "SCAN NOW", "#ffffff");
+        const rect = { x: b.qrX - 18, y: b.qrY - 18, w: b.size + 36, h: b.size + 36 };
+        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 18, "#101319", 8);
+        drawPill(ctx, b.w / 2 - 120, rect.y + rect.h - 20, 240, 40, "#101319", "SCAN NOW", "#ffffff");
       }
 
       if (frame === "neon") {
-        strokeRoundedRect(ctx, b.qrX - 22, b.qrY - 22, b.size + 44, b.size + 44, 34, "#cf0018", 10);
-        drawPill(ctx, b.w / 2 - 128, 14, 256, 40, "#101319", "OPEN NOW", "#ffffff");
+        const rect = { x: b.qrX - 22, y: b.qrY - 22, w: b.size + 44, h: b.size + 44 };
+        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 34, "#cf0018", 10);
+        drawPill(ctx, b.w / 2 - 128, rect.y - 20, 256, 40, "#101319", "OPEN NOW", "#ffffff");
       }
 
       if (frame === "ticket") {
-        strokeRoundedRect(ctx, b.qrX - 18, b.qrY - 18, b.size + 36, b.size + 36, 16, "#cf0018", 8);
+        const rect = { x: b.qrX - 18, y: b.qrY - 18, w: b.size + 36, h: b.size + 36 };
+        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 16, "#cf0018", 8);
         ctx.fillStyle = b.transparentOutput ? "rgba(0,0,0,0)" : "#f3f5f9";
         ctx.beginPath();
-        ctx.arc(8, b.h / 2, 18, 0, Math.PI * 2);
-        ctx.arc(b.w - 8, b.h / 2, 18, 0, Math.PI * 2);
+        ctx.arc(rect.x, rect.y + rect.h / 2, 18, 0, Math.PI * 2);
+        ctx.arc(rect.x + rect.w, rect.y + rect.h / 2, 18, 0, Math.PI * 2);
         ctx.fill();
-        drawPill(ctx, b.w / 2 - 138, b.h - 58, 276, 40, "#cf0018", "ENTRY PASS", "#ffffff");
+        drawPill(ctx, b.w / 2 - 138, rect.y + rect.h - 20, 276, 40, "#cf0018", "ENTRY PASS", "#ffffff");
       }
 
       if (frame === "device") {
-        fillRoundedRect(ctx, b.qrX - 26, b.qrY - 26, b.size + 52, b.size + 52, 34, "#12161c");
+        const rect = { x: b.qrX - 26, y: b.qrY - 26, w: b.size + 52, h: b.size + 52 };
+        fillRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 34, "#12161c");
         ctx.fillStyle = "#1e2631";
         fillRoundedRect(ctx, b.w / 2 - 90, b.qrY - 12, 180, 8, 999, "#1e2631");
-        drawPill(ctx, b.w / 2 - 130, b.h - 50, 260, 34, "#1e2631", "tap to open", "#98a9be");
+        drawPill(ctx, b.w / 2 - 130, rect.y + rect.h - 17, 260, 34, "#1e2631", "tap to open", "#98a9be");
       }
 
       if (frame === "focus") {
+        const rect = { x: b.qrX - 18, y: b.qrY - 18, w: b.size + 36, h: b.size + 36 };
         ctx.setLineDash([14, 9]);
-        strokeRoundedRect(ctx, b.qrX - 18, b.qrY - 18, b.size + 36, b.size + 36, 4, "#101319", 6);
+        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 4, "#101319", 6);
         ctx.setLineDash([]);
-        drawPill(ctx, b.w / 2 - 132, 12, 264, 38, "#ffffff", "AIM CAMERA", "#101319", "#101319");
+        drawPill(ctx, b.w / 2 - 132, rect.y - 19, 264, 38, "#ffffff", "AIM CAMERA", "#101319", "#101319");
       }
 
       if (frame === "badge") {
-        strokeRoundedRect(ctx, b.qrX - 20, b.qrY - 20, b.size + 40, b.size + 40, 28, "#cf0018", 10);
-        drawPill(ctx, b.w / 2 - 144, b.h - 58, 288, 40, "#ffffff", "SCAN TO VIEW", "#cf0018", "#cf0018");
+        const rect = { x: b.qrX - 20, y: b.qrY - 20, w: b.size + 40, h: b.size + 40 };
+        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 28, "#cf0018", 10);
+        drawPill(ctx, b.w / 2 - 144, rect.y + rect.h - 20, 288, 40, "#ffffff", "SCAN TO VIEW", "#cf0018", "#cf0018");
       }
     }
 
@@ -1703,15 +1709,15 @@
     function resetAll() {
       Object.assign(state, {
         type: "url",
-        frame: "classic",
-        dotStyle: "rounded",
-        cornerSquareStyle: "extra-rounded",
+        frame: "badge",
+        dotStyle: "dots",
+        cornerSquareStyle: "dot",
         cornerDotStyle: "dot",
         errorLevel: "Q",
         foregroundColor: "#cf0018",
         backgroundColor: "#ffffff",
         gradientEnabled: true,
-        gradientStart: "#101319",
+        gradientStart: "#4f1024",
         gradientEnd: "#cf0018",
         gradientType: "linear",
         gradientRotation: 45,
@@ -1719,8 +1725,8 @@
         margin: 12,
         transparentBackground: false,
         logoData: logoPresets.find((x) => x.key === "iw-transparent").data,
-        logoSize: 26,
-        logoMargin: 4,
+        logoSize: 55,
+        logoMargin: 15,
         hideBackgroundDots: true,
         selectedLogoKey: "iw-transparent"
       });
