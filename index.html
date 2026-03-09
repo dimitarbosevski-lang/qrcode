@@ -1,0 +1,1747 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ForgeQR Studio - Advanced QR Generator</title>
+  <meta name="description" content="Advanced QR generator with multi-type payloads, frames, logos, dot and corner styling, gradients, and export options." />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@500;700&display=swap");
+
+    :root {
+      --bg: #f4efe7;
+      --card: #fffdf8;
+      --ink: #101319;
+      --muted: #5f6773;
+      --accent: #c3492b;
+      --accent-2: #006f62;
+      --line: #d9d3c8;
+      --focus: rgba(195, 73, 43, 0.28);
+      --radius: 16px;
+      --shadow: 0 22px 50px rgba(16, 19, 25, 0.13);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      background:
+        radial-gradient(1200px 700px at -10% -20%, rgba(0, 111, 98, 0.12), transparent),
+        radial-gradient(900px 600px at 110% 0%, rgba(195, 73, 43, 0.15), transparent),
+        var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: min(1400px, calc(100% - 32px));
+      margin: 18px auto;
+      display: grid;
+      grid-template-columns: minmax(560px, 1.15fr) minmax(340px, 0.85fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 4px);
+      box-shadow: var(--shadow);
+    }
+
+    .controls {
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .title {
+      margin: 0;
+      font-family: "Sora", sans-serif;
+      font-size: clamp(1.25rem, 2vw, 1.8rem);
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .btn,
+    button,
+    select,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.82rem;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn.primary {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    .btn.primary:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+
+    .section h3 {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      letter-spacing: 0.01em;
+    }
+
+    .types {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .type-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 8px 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+      min-height: 56px;
+      line-height: 1.2;
+    }
+
+    .type-btn.active {
+      border-color: var(--accent);
+      background: #fff5f1;
+      color: var(--accent);
+      box-shadow: inset 0 0 0 1px rgba(195, 73, 43, 0.2);
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 10px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 0.9rem;
+      transition: 0.15s ease;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--focus);
+    }
+
+    input[type="color"] {
+      padding: 0;
+      height: 40px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      border: none;
+    }
+
+    .inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.84rem;
+      color: var(--ink);
+    }
+
+    .frames,
+    .logos,
+    .presets {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .frame-btn,
+    .logo-btn,
+    .preset-btn {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 9px 6px;
+      min-height: 62px;
+      text-align: center;
+      font-size: 0.71rem;
+      font-weight: 700;
+      line-height: 1.2;
+      cursor: pointer;
+    }
+
+    .frame-btn.active,
+    .logo-btn.active,
+    .preset-btn.active {
+      border-color: var(--accent-2);
+      color: var(--accent-2);
+      background: #effaf7;
+      box-shadow: inset 0 0 0 1px rgba(0, 111, 98, 0.2);
+    }
+
+    .preview {
+      position: sticky;
+      top: 16px;
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .preview-head h2 {
+      font-family: "Sora", sans-serif;
+      margin: 0;
+      font-size: 1.02rem;
+      letter-spacing: -0.01em;
+    }
+
+    .preview-stage-wrap {
+      background: linear-gradient(180deg, #fff, #f7f4ed);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px;
+      display: grid;
+      place-items: center;
+      min-height: 440px;
+    }
+
+    .preview-stage {
+      --pad: 16px;
+      --banner-size: 0px;
+      --frame-bg: #fff;
+      --frame-border: #151515;
+      --frame-radius: 18px;
+      width: min(360px, 100%);
+      background: var(--frame-bg);
+      border: 4px solid var(--frame-border);
+      border-radius: var(--frame-radius);
+      padding: var(--pad);
+      position: relative;
+      transition: 0.25s ease;
+      box-shadow: 0 16px 32px rgba(16, 19, 25, 0.13);
+      display: grid;
+      gap: 0;
+    }
+
+    .preview-stage .banner-top,
+    .preview-stage .banner-bottom {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      min-height: 34px;
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 0.74rem;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+
+    .banner-top {
+      top: -17px;
+    }
+
+    .banner-bottom {
+      bottom: -17px;
+    }
+
+    .qr-shell {
+      background: #fff;
+      border-radius: calc(var(--frame-radius) - 4px);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #qrMount {
+      width: 100%;
+      display: grid;
+      place-items: center;
+      min-height: 280px;
+    }
+
+    #qrMount canvas,
+    #qrMount svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+    }
+
+    .frame-none {
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+      padding: 0;
+    }
+
+    .frame-none .qr-shell {
+      border-radius: 0;
+    }
+
+    .frame-classic {
+      --pad: 16px;
+      --frame-bg: #fff;
+      --frame-border: #101319;
+      --frame-radius: 10px;
+    }
+
+    .frame-classic .banner-bottom {
+      display: inline-flex;
+      background: #101319;
+      color: #fff;
+      min-width: 138px;
+    }
+
+    .frame-neon {
+      --pad: 18px;
+      --frame-bg: linear-gradient(145deg, #f0fcff, #f8fff7);
+      --frame-border: #006f62;
+      --frame-radius: 26px;
+      border-width: 6px;
+    }
+
+    .frame-neon .banner-top {
+      display: inline-flex;
+      background: #006f62;
+      color: #fff;
+    }
+
+    .frame-ticket {
+      --pad: 20px;
+      --frame-bg: #fff8eb;
+      --frame-border: #c3492b;
+      --frame-radius: 14px;
+    }
+
+    .frame-ticket::before,
+    .frame-ticket::after {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 3px solid #c3492b;
+      top: calc(50% - 11px);
+    }
+
+    .frame-ticket::before {
+      left: -14px;
+    }
+
+    .frame-ticket::after {
+      right: -14px;
+    }
+
+    .frame-ticket .banner-bottom {
+      display: inline-flex;
+      background: #c3492b;
+      color: #fff;
+    }
+
+    .frame-device {
+      --pad: 26px;
+      --frame-bg: #12161c;
+      --frame-border: #12161c;
+      --frame-radius: 28px;
+    }
+
+    .frame-device .qr-shell {
+      border-radius: 12px;
+      border: 8px solid #0f1318;
+      position: relative;
+    }
+
+    .frame-device .qr-shell::before {
+      content: "";
+      position: absolute;
+      width: 92px;
+      height: 6px;
+      background: #1e2631;
+      border-radius: 999px;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 8px;
+      z-index: 4;
+    }
+
+    .frame-device .banner-bottom {
+      display: inline-flex;
+      background: #1e2631;
+      color: #98a9be;
+    }
+
+    .frame-focus {
+      --pad: 20px;
+      --frame-bg: #ffffff;
+      --frame-border: #101319;
+      --frame-radius: 4px;
+      border-style: dashed;
+      border-width: 3px;
+    }
+
+    .frame-focus .banner-top {
+      display: inline-flex;
+      background: #ffffff;
+      border: 2px solid #101319;
+      color: #101319;
+    }
+
+    .frame-badge {
+      --pad: 18px;
+      --frame-bg: radial-gradient(circle at 20% 15%, #fff6f0 0%, #ffffff 56%);
+      --frame-border: #c3492b;
+      --frame-radius: 20px;
+      border-width: 5px;
+    }
+
+    .frame-badge .banner-bottom {
+      display: inline-flex;
+      background: #ffffff;
+      color: #c3492b;
+      border: 2px solid #c3492b;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+    }
+
+    .output {
+      display: grid;
+      gap: 8px;
+    }
+
+    .status {
+      font-size: 0.78rem;
+      color: var(--muted);
+      min-height: 20px;
+    }
+
+    @media (max-width: 1180px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .preview {
+        position: static;
+      }
+
+      .types {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        width: min(1400px, calc(100% - 14px));
+        margin: 8px auto 16px;
+      }
+
+      .controls,
+      .preview {
+        padding: 12px;
+      }
+
+      .grid,
+      .types,
+      .frames,
+      .logos,
+      .presets {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .preview-stage-wrap {
+        min-height: 350px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="panel controls">
+      <header class="header">
+        <div>
+          <h1 class="title">ForgeQR Studio</h1>
+          <p class="subtitle">Advanced QR generator with payload, frame, logo, shape and export controls.</p>
+        </div>
+        <div class="top-actions">
+          <button class="btn" id="resetBtn" type="button">Reset</button>
+          <button class="btn primary" id="randomizeBtn" type="button">Random Style</button>
+        </div>
+      </header>
+
+      <section class="section">
+        <h3>QR Type</h3>
+        <div class="types" id="typeButtons"></div>
+      </section>
+
+      <section class="section">
+        <h3>Payload</h3>
+        <div id="dynamicFields"></div>
+      </section>
+
+      <section class="section">
+        <h3>Frame Presets</h3>
+        <div class="frames" id="frameButtons"></div>
+      </section>
+
+      <section class="section">
+        <h3>Logo</h3>
+        <div class="logos" id="logoButtons"></div>
+        <div style="height: 8px"></div>
+        <label class="label" for="logoUpload">Upload custom logo</label>
+        <input id="logoUpload" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
+        <div style="height: 8px"></div>
+        <div class="grid">
+          <div>
+            <label class="label" for="logoSize">Logo size (%)</label>
+            <input id="logoSize" type="range" min="10" max="55" value="26" />
+          </div>
+          <div>
+            <label class="label" for="logoMargin">Logo margin</label>
+            <input id="logoMargin" type="range" min="0" max="20" value="4" />
+          </div>
+        </div>
+        <div style="height: 8px"></div>
+        <label class="check"><input id="hideBackgroundDots" type="checkbox" checked />Hide dots behind logo</label>
+      </section>
+
+      <section class="section">
+        <h3>Shape & Color</h3>
+        <div class="grid">
+          <div>
+            <label class="label" for="dotStyle">Dot shape</label>
+            <select id="dotStyle">
+              <option value="square">Square</option>
+              <option value="dots">Dots</option>
+              <option value="rounded" selected>Rounded</option>
+              <option value="classy">Classy</option>
+              <option value="classy-rounded">Classy Rounded</option>
+              <option value="extra-rounded">Extra Rounded</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="cornerSquareStyle">Finder box shape</label>
+            <select id="cornerSquareStyle">
+              <option value="square">Square</option>
+              <option value="dot">Dot</option>
+              <option value="extra-rounded" selected>Extra Rounded</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="cornerDotStyle">Finder dot shape</label>
+            <select id="cornerDotStyle">
+              <option value="square">Square</option>
+              <option value="dot" selected>Dot</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="errorLevel">Error correction</label>
+            <select id="errorLevel">
+              <option value="L">L (7%)</option>
+              <option value="M">M (15%)</option>
+              <option value="Q" selected>Q (25%)</option>
+              <option value="H">H (30%)</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="foregroundColor">QR color</label>
+            <input id="foregroundColor" type="color" value="#111111" />
+          </div>
+          <div>
+            <label class="label" for="backgroundColor">Background</label>
+            <input id="backgroundColor" type="color" value="#ffffff" />
+          </div>
+        </div>
+
+        <div style="height: 8px"></div>
+        <label class="check"><input id="gradientEnabled" type="checkbox" />Use gradient color</label>
+        <div style="height: 8px"></div>
+        <div class="grid">
+          <div>
+            <label class="label" for="gradientStart">Gradient start</label>
+            <input id="gradientStart" type="color" value="#111111" />
+          </div>
+          <div>
+            <label class="label" for="gradientEnd">Gradient end</label>
+            <input id="gradientEnd" type="color" value="#c3492b" />
+          </div>
+          <div>
+            <label class="label" for="gradientType">Gradient type</label>
+            <select id="gradientType">
+              <option value="linear" selected>Linear</option>
+              <option value="radial">Radial</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="gradientRotation">Gradient angle</label>
+            <input id="gradientRotation" type="range" min="0" max="360" value="45" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h3>Output & Presets</h3>
+        <div class="grid">
+          <div>
+            <label class="label" for="qrSize">Output size (px)</label>
+            <input id="qrSize" type="range" min="220" max="1400" value="800" />
+          </div>
+          <div>
+            <label class="label" for="qrMargin">Quiet zone margin</label>
+            <input id="qrMargin" type="range" min="0" max="40" value="12" />
+          </div>
+          <div>
+            <label class="label" for="exportFormat">Export format</label>
+            <select id="exportFormat">
+              <option value="png" selected>PNG</option>
+              <option value="jpeg">JPEG</option>
+              <option value="svg">SVG (raw QR when no frame)</option>
+            </select>
+          </div>
+          <div>
+            <label class="label">Background mode</label>
+            <label class="check"><input id="transparentBackground" type="checkbox" />Transparent (where possible)</label>
+          </div>
+        </div>
+        <div style="height: 8px"></div>
+        <h3 style="margin-top: 4px">Quick Presets</h3>
+        <div class="presets" id="presetButtons"></div>
+      </section>
+    </section>
+
+    <aside class="panel preview">
+      <div class="preview-head">
+        <h2>Live Preview</h2>
+        <span class="muted" id="payloadBytes">0 chars</span>
+      </div>
+
+      <div class="preview-stage-wrap">
+        <div class="preview-stage frame-classic" id="previewStage">
+          <div class="banner-top" id="bannerTop"></div>
+          <div class="qr-shell">
+            <div id="qrMount"></div>
+          </div>
+          <div class="banner-bottom" id="bannerBottom"></div>
+        </div>
+      </div>
+
+      <div class="output">
+        <button type="button" class="btn primary" id="downloadBtn">Download QR</button>
+        <button type="button" class="btn" id="copyImageBtn">Copy QR Image</button>
+        <button type="button" class="btn" id="copyPayloadBtn">Copy QR Payload</button>
+        <div class="status" id="statusLine"></div>
+      </div>
+    </aside>
+  </main>
+
+  <script type="module">
+    const statusLine = document.getElementById("statusLine");
+
+    function setStatus(message, isError = false) {
+      statusLine.textContent = message;
+      statusLine.style.color = isError ? "#af2525" : "#5f6773";
+    }
+
+    let QRCodeStyling;
+    try {
+      ({ default: QRCodeStyling } = await import("https://cdn.jsdelivr.net/npm/qr-code-styling@1.9.2/+esm"));
+    } catch (error) {
+      setStatus("Could not load QR engine from CDN. Check internet access and reload.", true);
+      throw error;
+    }
+
+    const contentTypes = {
+      text: {
+        label: "Text",
+        fields: [
+          { id: "text", label: "Text", type: "textarea", placeholder: "Write any plain text" }
+        ],
+        defaults: { text: "Welcome to ForgeQR Studio" },
+        build: (v) => v.text || ""
+      },
+      url: {
+        label: "URL",
+        fields: [
+          { id: "url", label: "URL", type: "url", placeholder: "https://example.com" }
+        ],
+        defaults: { url: "https://www.example.com" },
+        build: (v) => normalizeUrl(v.url)
+      },
+      email: {
+        label: "Email",
+        fields: [
+          { id: "to", label: "Email", type: "email", placeholder: "name@company.com" },
+          { id: "subject", label: "Subject", type: "text", placeholder: "Message subject" },
+          { id: "body", label: "Body", type: "textarea", placeholder: "Write message..." }
+        ],
+        defaults: { to: "hello@example.com", subject: "Hi", body: "I scanned your QR code." },
+        build: (v) => `mailto:${v.to || ""}?subject=${enc(v.subject || "")}&body=${enc(v.body || "")}`
+      },
+      phone: {
+        label: "Phone",
+        fields: [
+          { id: "phone", label: "Phone number", type: "text", placeholder: "+1 555 010 1234" }
+        ],
+        defaults: { phone: "+1 555 010 1234" },
+        build: (v) => `tel:${(v.phone || "").trim()}`
+      },
+      sms: {
+        label: "SMS",
+        fields: [
+          { id: "phone", label: "Phone number", type: "text", placeholder: "+1 555 010 1234" },
+          { id: "message", label: "Message", type: "textarea", placeholder: "Write SMS text" }
+        ],
+        defaults: { phone: "+1 555 010 1234", message: "Hello from QR" },
+        build: (v) => `smsto:${(v.phone || "").trim()}:${v.message || ""}`
+      },
+      wifi: {
+        label: "WiFi",
+        fields: [
+          { id: "ssid", label: "Network SSID", type: "text", placeholder: "MyNetwork" },
+          { id: "password", label: "Password", type: "text", placeholder: "password123" },
+          {
+            id: "encryption",
+            label: "Encryption",
+            type: "select",
+            options: ["WPA", "WEP", "nopass"]
+          },
+          { id: "hidden", label: "Hidden network", type: "checkbox" }
+        ],
+        defaults: { ssid: "Office WiFi", password: "change-me", encryption: "WPA", hidden: false },
+        build: (v) => {
+          const t = v.encryption || "WPA";
+          const h = v.hidden ? "true" : "false";
+          return `WIFI:T:${escWifi(t)};S:${escWifi(v.ssid || "")};P:${escWifi(v.password || "")};H:${h};;`;
+        }
+      },
+      contact: {
+        label: "Contact",
+        fields: [
+          { id: "firstName", label: "First name", type: "text", placeholder: "Jane" },
+          { id: "lastName", label: "Last name", type: "text", placeholder: "Doe" },
+          { id: "company", label: "Company", type: "text", placeholder: "Acme Inc" },
+          { id: "jobTitle", label: "Job title", type: "text", placeholder: "Operations Lead" },
+          { id: "phone", label: "Phone", type: "text", placeholder: "+1 555 010 1234" },
+          { id: "email", label: "Email", type: "email", placeholder: "jane@acme.com" },
+          { id: "website", label: "Website", type: "url", placeholder: "https://acme.com" },
+          { id: "address", label: "Address", type: "text", placeholder: "101 Main St, New York" }
+        ],
+        defaults: {
+          firstName: "Jane",
+          lastName: "Doe",
+          company: "Acme Inc",
+          jobTitle: "Operations Lead",
+          phone: "+1 555 010 1234",
+          email: "jane@acme.com",
+          website: "https://acme.com",
+          address: "101 Main St, New York"
+        },
+        build: (v) => {
+          const n = `${v.lastName || ""};${v.firstName || ""}`;
+          return [
+            "BEGIN:VCARD",
+            "VERSION:3.0",
+            `N:${n}`,
+            `FN:${[v.firstName, v.lastName].filter(Boolean).join(" ")}`,
+            `ORG:${v.company || ""}`,
+            `TITLE:${v.jobTitle || ""}`,
+            `TEL;TYPE=CELL:${v.phone || ""}`,
+            `EMAIL:${v.email || ""}`,
+            `URL:${normalizeUrl(v.website || "")}`,
+            `ADR:;;${v.address || ""}`,
+            "END:VCARD"
+          ].join("\n");
+        }
+      },
+      event: {
+        label: "Event",
+        fields: [
+          { id: "title", label: "Title", type: "text", placeholder: "Launch Party" },
+          { id: "location", label: "Location", type: "text", placeholder: "Downtown Hall" },
+          { id: "start", label: "Start", type: "datetime-local" },
+          { id: "end", label: "End", type: "datetime-local" },
+          { id: "description", label: "Description", type: "textarea", placeholder: "Event details" }
+        ],
+        defaults: {
+          title: "Product Launch",
+          location: "Main Hall",
+          start: localDateInput(24),
+          end: localDateInput(26),
+          description: "Bring your invite and scan at entry."
+        },
+        build: (v) => {
+          const dtStart = toIcsDate(v.start);
+          const dtEnd = toIcsDate(v.end);
+          return [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//ForgeQR//EN",
+            "BEGIN:VEVENT",
+            `SUMMARY:${v.title || "Event"}`,
+            `LOCATION:${v.location || ""}`,
+            `DTSTART:${dtStart}`,
+            `DTEND:${dtEnd}`,
+            `DESCRIPTION:${(v.description || "").replace(/\n/g, "\\n")}`,
+            "END:VEVENT",
+            "END:VCALENDAR"
+          ].join("\n");
+        }
+      },
+      whatsapp: {
+        label: "WhatsApp",
+        fields: [
+          { id: "phone", label: "WhatsApp number", type: "text", placeholder: "15550101234" },
+          { id: "message", label: "Prefilled message", type: "textarea", placeholder: "Hi, I scanned your QR" }
+        ],
+        defaults: { phone: "15550101234", message: "Hello from ForgeQR" },
+        build: (v) => `https://wa.me/${digitsOnly(v.phone || "")}?text=${enc(v.message || "")}`
+      },
+      geo: {
+        label: "Location",
+        fields: [
+          { id: "lat", label: "Latitude", type: "text", placeholder: "40.7128" },
+          { id: "lng", label: "Longitude", type: "text", placeholder: "-74.0060" },
+          { id: "label", label: "Label", type: "text", placeholder: "Store location" }
+        ],
+        defaults: { lat: "40.7128", lng: "-74.0060", label: "Store location" },
+        build: (v) => {
+          const query = v.label ? `?q=${enc(v.label)}` : "";
+          return `geo:${v.lat || 0},${v.lng || 0}${query}`;
+        }
+      }
+    };
+
+    const framePresets = [
+      { key: "none", label: "No Frame", top: "", bottom: "" },
+      { key: "classic", label: "Classic Scan", top: "", bottom: "SCAN ME" },
+      { key: "neon", label: "Neon Card", top: "OPEN NOW", bottom: "" },
+      { key: "ticket", label: "Ticket", top: "", bottom: "ENTRY PASS" },
+      { key: "device", label: "Device", top: "", bottom: "tap to open" },
+      { key: "focus", label: "Focus Box", top: "AIM CAMERA", bottom: "" },
+      { key: "badge", label: "Brand Badge", top: "", bottom: "SCAN TO VIEW" }
+    ];
+
+    const logoPresets = [
+      { key: "none", label: "No Logo", data: "" },
+      { key: "scan", label: "SCAN", data: svgLogo("SCAN", "#ffffff", "#101319") },
+      { key: "link", label: "LINK", data: svgLogo("LINK", "#ffffff", "#006f62") },
+      { key: "wifi", label: "WIFI", data: svgLogo("WIFI", "#ffffff", "#c3492b") },
+      { key: "menu", label: "MENU", data: svgLogo("MENU", "#ffffff", "#2c2f36") }
+    ];
+
+    const quickPresets = [
+      {
+        key: "restaurant",
+        label: "Restaurant",
+        apply: (state, values) => {
+          state.type = "url";
+          values.url.url = "https://example.com/menu";
+          state.frame = "ticket";
+          state.dotStyle = "rounded";
+          state.cornerSquareStyle = "extra-rounded";
+          state.cornerDotStyle = "dot";
+          state.foregroundColor = "#111111";
+          state.backgroundColor = "#fff8eb";
+          state.gradientEnabled = false;
+          state.logoData = logoPresets.find((x) => x.key === "menu").data;
+        }
+      },
+      {
+        key: "wifi",
+        label: "WiFi Card",
+        apply: (state, values) => {
+          state.type = "wifi";
+          values.wifi.ssid = "GuestNet";
+          values.wifi.password = "guest-2026";
+          values.wifi.encryption = "WPA";
+          state.frame = "neon";
+          state.dotStyle = "classy-rounded";
+          state.cornerSquareStyle = "dot";
+          state.cornerDotStyle = "dot";
+          state.gradientEnabled = true;
+          state.gradientStart = "#0e3f37";
+          state.gradientEnd = "#00b497";
+          state.logoData = logoPresets.find((x) => x.key === "wifi").data;
+        }
+      },
+      {
+        key: "contact",
+        label: "Contact Card",
+        apply: (state) => {
+          state.type = "contact";
+          state.frame = "classic";
+          state.dotStyle = "extra-rounded";
+          state.cornerSquareStyle = "extra-rounded";
+          state.cornerDotStyle = "square";
+          state.foregroundColor = "#1f2430";
+          state.backgroundColor = "#ffffff";
+          state.gradientEnabled = false;
+          state.logoData = logoPresets.find((x) => x.key === "link").data;
+        }
+      },
+      {
+        key: "event",
+        label: "Event Pass",
+        apply: (state) => {
+          state.type = "event";
+          state.frame = "badge";
+          state.dotStyle = "dots";
+          state.cornerSquareStyle = "dot";
+          state.cornerDotStyle = "dot";
+          state.gradientEnabled = true;
+          state.gradientType = "linear";
+          state.gradientRotation = 130;
+          state.gradientStart = "#2f2c76";
+          state.gradientEnd = "#e03c6b";
+          state.logoData = logoPresets.find((x) => x.key === "scan").data;
+        }
+      }
+    ];
+
+    const valuesByType = Object.fromEntries(
+      Object.entries(contentTypes).map(([k, v]) => [k, { ...v.defaults }])
+    );
+
+    const state = {
+      type: "url",
+      frame: "classic",
+      dotStyle: "rounded",
+      cornerSquareStyle: "extra-rounded",
+      cornerDotStyle: "dot",
+      errorLevel: "Q",
+      foregroundColor: "#111111",
+      backgroundColor: "#ffffff",
+      gradientEnabled: false,
+      gradientStart: "#111111",
+      gradientEnd: "#c3492b",
+      gradientType: "linear",
+      gradientRotation: 45,
+      size: 800,
+      margin: 12,
+      transparentBackground: false,
+      logoData: logoPresets.find((x) => x.key === "scan").data,
+      logoSize: 26,
+      logoMargin: 4,
+      hideBackgroundDots: true,
+      selectedLogoKey: "scan"
+    };
+
+    const refs = {
+      typeButtons: document.getElementById("typeButtons"),
+      dynamicFields: document.getElementById("dynamicFields"),
+      frameButtons: document.getElementById("frameButtons"),
+      logoButtons: document.getElementById("logoButtons"),
+      presetButtons: document.getElementById("presetButtons"),
+      payloadBytes: document.getElementById("payloadBytes"),
+      previewStage: document.getElementById("previewStage"),
+      bannerTop: document.getElementById("bannerTop"),
+      bannerBottom: document.getElementById("bannerBottom")
+    };
+
+    const qrCode = new QRCodeStyling({
+      width: state.size,
+      height: state.size,
+      data: "https://www.example.com",
+      margin: state.margin,
+      qrOptions: { errorCorrectionLevel: state.errorLevel },
+      dotsOptions: { type: state.dotStyle, color: state.foregroundColor },
+      cornersSquareOptions: { type: state.cornerSquareStyle, color: state.foregroundColor },
+      cornersDotOptions: { type: state.cornerDotStyle, color: state.foregroundColor },
+      backgroundOptions: { color: state.backgroundColor }
+    });
+
+    qrCode.append(document.getElementById("qrMount"));
+
+    renderTypeButtons();
+    renderFrameButtons();
+    renderLogoButtons();
+    renderPresetButtons();
+    renderDynamicFields();
+    syncControlsFromState();
+    applyFrameToPreview();
+    updateQr();
+
+    bindInputs();
+
+    function bindInputs() {
+      document.getElementById("dotStyle").addEventListener("change", (e) => {
+        state.dotStyle = e.target.value;
+        updateQr();
+      });
+      document.getElementById("cornerSquareStyle").addEventListener("change", (e) => {
+        state.cornerSquareStyle = e.target.value;
+        updateQr();
+      });
+      document.getElementById("cornerDotStyle").addEventListener("change", (e) => {
+        state.cornerDotStyle = e.target.value;
+        updateQr();
+      });
+      document.getElementById("errorLevel").addEventListener("change", (e) => {
+        state.errorLevel = e.target.value;
+        updateQr();
+      });
+      document.getElementById("foregroundColor").addEventListener("input", (e) => {
+        state.foregroundColor = e.target.value;
+        updateQr();
+      });
+      document.getElementById("backgroundColor").addEventListener("input", (e) => {
+        state.backgroundColor = e.target.value;
+        updateQr();
+      });
+      document.getElementById("gradientEnabled").addEventListener("change", (e) => {
+        state.gradientEnabled = e.target.checked;
+        updateQr();
+      });
+      document.getElementById("gradientStart").addEventListener("input", (e) => {
+        state.gradientStart = e.target.value;
+        updateQr();
+      });
+      document.getElementById("gradientEnd").addEventListener("input", (e) => {
+        state.gradientEnd = e.target.value;
+        updateQr();
+      });
+      document.getElementById("gradientType").addEventListener("change", (e) => {
+        state.gradientType = e.target.value;
+        updateQr();
+      });
+      document.getElementById("gradientRotation").addEventListener("input", (e) => {
+        state.gradientRotation = Number(e.target.value);
+        updateQr();
+      });
+      document.getElementById("qrSize").addEventListener("input", (e) => {
+        state.size = Number(e.target.value);
+        updateQr();
+      });
+      document.getElementById("qrMargin").addEventListener("input", (e) => {
+        state.margin = Number(e.target.value);
+        updateQr();
+      });
+      document.getElementById("transparentBackground").addEventListener("change", (e) => {
+        state.transparentBackground = e.target.checked;
+        updateQr();
+      });
+      document.getElementById("logoSize").addEventListener("input", (e) => {
+        state.logoSize = Number(e.target.value);
+        updateQr();
+      });
+      document.getElementById("logoMargin").addEventListener("input", (e) => {
+        state.logoMargin = Number(e.target.value);
+        updateQr();
+      });
+      document.getElementById("hideBackgroundDots").addEventListener("change", (e) => {
+        state.hideBackgroundDots = e.target.checked;
+        updateQr();
+      });
+      document.getElementById("logoUpload").addEventListener("change", async (e) => {
+        const [file] = e.target.files || [];
+        if (!file) {
+          return;
+        }
+        state.logoData = await fileToDataURL(file);
+        state.selectedLogoKey = "custom";
+        markActiveLogoButton();
+        updateQr();
+        setStatus(`Loaded custom logo: ${file.name}`);
+      });
+      document.getElementById("downloadBtn").addEventListener("click", downloadCurrent);
+      document.getElementById("copyImageBtn").addEventListener("click", copyQrImageToClipboard);
+      document.getElementById("copyPayloadBtn").addEventListener("click", async () => {
+        const payload = buildPayload();
+        try {
+          await navigator.clipboard.writeText(payload);
+          setStatus("QR payload copied to clipboard.");
+        } catch {
+          setStatus("Clipboard permission denied. Copy manually from payload type fields.", true);
+        }
+      });
+      document.getElementById("resetBtn").addEventListener("click", resetAll);
+      document.getElementById("randomizeBtn").addEventListener("click", randomizeStyle);
+    }
+
+    function renderTypeButtons() {
+      refs.typeButtons.innerHTML = Object.entries(contentTypes)
+        .map(
+          ([key, type]) =>
+            `<button class="type-btn ${state.type === key ? "active" : ""}" data-type="${key}" type="button">${type.label}</button>`
+        )
+        .join("");
+
+      refs.typeButtons.querySelectorAll(".type-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.type = btn.dataset.type;
+          renderTypeButtons();
+          renderDynamicFields();
+          updateQr();
+        });
+      });
+    }
+
+    function renderDynamicFields() {
+      const type = contentTypes[state.type];
+      const values = valuesByType[state.type];
+      refs.dynamicFields.innerHTML = type.fields
+        .map((field) => {
+          if (field.type === "checkbox") {
+            return `
+              <div style="margin-bottom: 8px">
+                <label class="check"><input data-field="${field.id}" type="checkbox" ${values[field.id] ? "checked" : ""}/> ${field.label}</label>
+              </div>
+            `;
+          }
+
+          if (field.type === "select") {
+            return `
+              <div style="margin-bottom: 10px">
+                <label class="label">${field.label}</label>
+                <select data-field="${field.id}">
+                  ${field.options
+                    .map((opt) => `<option value="${opt}" ${values[field.id] === opt ? "selected" : ""}>${opt}</option>`)
+                    .join("")}
+                </select>
+              </div>
+            `;
+          }
+
+          if (field.type === "textarea") {
+            return `
+              <div style="margin-bottom: 10px">
+                <label class="label">${field.label}</label>
+                <textarea data-field="${field.id}" placeholder="${field.placeholder || ""}">${escapeHtml(values[field.id] || "")}</textarea>
+              </div>
+            `;
+          }
+
+          return `
+            <div style="margin-bottom: 10px">
+              <label class="label">${field.label}</label>
+              <input data-field="${field.id}" type="${field.type}" value="${escapeHtml(values[field.id] || "")}" placeholder="${field.placeholder || ""}" />
+            </div>
+          `;
+        })
+        .join("");
+
+      refs.dynamicFields.querySelectorAll("[data-field]").forEach((el) => {
+        const evt = el.type === "checkbox" ? "change" : "input";
+        el.addEventListener(evt, () => {
+          valuesByType[state.type][el.dataset.field] = el.type === "checkbox" ? el.checked : el.value;
+          updateQr();
+        });
+      });
+    }
+
+    function renderFrameButtons() {
+      refs.frameButtons.innerHTML = framePresets
+        .map(
+          (frame) =>
+            `<button class="frame-btn ${state.frame === frame.key ? "active" : ""}" data-frame="${frame.key}" type="button">${frame.label}</button>`
+        )
+        .join("");
+
+      refs.frameButtons.querySelectorAll(".frame-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.frame = btn.dataset.frame;
+          markActiveFrameButton();
+          applyFrameToPreview();
+        });
+      });
+    }
+
+    function renderLogoButtons() {
+      refs.logoButtons.innerHTML = logoPresets
+        .map(
+          (logo) =>
+            `<button class="logo-btn ${state.selectedLogoKey === logo.key ? "active" : ""}" data-logo="${logo.key}" type="button">${logo.label}</button>`
+        )
+        .join("");
+
+      refs.logoButtons.querySelectorAll(".logo-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const logo = logoPresets.find((x) => x.key === btn.dataset.logo);
+          state.selectedLogoKey = logo.key;
+          state.logoData = logo.data;
+          markActiveLogoButton();
+          updateQr();
+        });
+      });
+    }
+
+    function renderPresetButtons() {
+      refs.presetButtons.innerHTML = quickPresets
+        .map((preset) => `<button class="preset-btn" data-preset="${preset.key}" type="button">${preset.label}</button>`)
+        .join("");
+
+      refs.presetButtons.querySelectorAll(".preset-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const preset = quickPresets.find((x) => x.key === btn.dataset.preset);
+          preset.apply(state, valuesByType);
+          renderTypeButtons();
+          renderDynamicFields();
+          markActiveFrameButton();
+          markActiveLogoButton();
+          applyFrameToPreview();
+          syncControlsFromState();
+          updateQr();
+          refs.presetButtons.querySelectorAll(".preset-btn").forEach((el) => el.classList.remove("active"));
+          btn.classList.add("active");
+          setStatus(`Applied preset: ${preset.label}`);
+        });
+      });
+    }
+
+    function markActiveFrameButton() {
+      refs.frameButtons.querySelectorAll(".frame-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.frame === state.frame);
+      });
+    }
+
+    function markActiveLogoButton() {
+      refs.logoButtons.querySelectorAll(".logo-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.logo === state.selectedLogoKey);
+      });
+    }
+
+    function syncControlsFromState() {
+      setValue("dotStyle", state.dotStyle);
+      setValue("cornerSquareStyle", state.cornerSquareStyle);
+      setValue("cornerDotStyle", state.cornerDotStyle);
+      setValue("errorLevel", state.errorLevel);
+      setValue("foregroundColor", state.foregroundColor);
+      setValue("backgroundColor", state.backgroundColor);
+      setChecked("gradientEnabled", state.gradientEnabled);
+      setValue("gradientStart", state.gradientStart);
+      setValue("gradientEnd", state.gradientEnd);
+      setValue("gradientType", state.gradientType);
+      setValue("gradientRotation", String(state.gradientRotation));
+      setValue("qrSize", String(state.size));
+      setValue("qrMargin", String(state.margin));
+      setChecked("transparentBackground", state.transparentBackground);
+      setValue("logoSize", String(state.logoSize));
+      setValue("logoMargin", String(state.logoMargin));
+      setChecked("hideBackgroundDots", state.hideBackgroundDots);
+    }
+
+    function applyFrameToPreview() {
+      refs.previewStage.className = `preview-stage frame-${state.frame}`;
+      const frame = framePresets.find((f) => f.key === state.frame) || framePresets[0];
+      refs.bannerTop.textContent = frame.top;
+      refs.bannerBottom.textContent = frame.bottom;
+    }
+
+    function buildPayload() {
+      const type = contentTypes[state.type];
+      return type.build(valuesByType[state.type]);
+    }
+
+    function buildGradient() {
+      return {
+        type: state.gradientType,
+        rotation: (Number(state.gradientRotation) * Math.PI) / 180,
+        colorStops: [
+          { offset: 0, color: state.gradientStart },
+          { offset: 1, color: state.gradientEnd }
+        ]
+      };
+    }
+
+    function buildColorOptions() {
+      if (state.gradientEnabled) {
+        return { gradient: buildGradient() };
+      }
+      return { color: state.foregroundColor };
+    }
+
+    function updateQr() {
+      const payload = buildPayload();
+      const colorOptions = buildColorOptions();
+
+      qrCode.update({
+        width: state.size,
+        height: state.size,
+        data: payload,
+        margin: state.margin,
+        image: state.logoData || undefined,
+        qrOptions: {
+          errorCorrectionLevel: state.errorLevel
+        },
+        imageOptions: {
+          hideBackgroundDots: state.hideBackgroundDots,
+          imageSize: state.logoSize / 100,
+          margin: state.logoMargin,
+          crossOrigin: "anonymous"
+        },
+        dotsOptions: {
+          type: state.dotStyle,
+          ...colorOptions
+        },
+        cornersSquareOptions: {
+          type: state.cornerSquareStyle,
+          ...colorOptions
+        },
+        cornersDotOptions: {
+          type: state.cornerDotStyle,
+          ...colorOptions
+        },
+        backgroundOptions: {
+          color: state.transparentBackground ? "transparent" : state.backgroundColor
+        }
+      });
+
+      refs.payloadBytes.textContent = `${payload.length} chars`;
+      applyFrameToPreview();
+    }
+
+    async function downloadCurrent() {
+      const format = document.getElementById("exportFormat").value;
+      const fileBase = `forgeqr-${state.type}-${state.frame}`;
+
+      try {
+        if (format === "svg" && state.frame === "none") {
+          await qrCode.download({ extension: "svg", name: fileBase });
+          setStatus("Downloaded SVG QR.");
+          return;
+        }
+
+        if (format === "svg" && state.frame !== "none") {
+          setStatus("SVG with frames is not supported directly. Downloaded PNG instead.");
+        }
+
+        const rawBlob = await qrCode.getRawData("png");
+        const composed = await composeFramedImage(rawBlob, state.frame, format === "jpeg" ? "jpeg" : "png");
+        triggerDownload(composed.blob, `${fileBase}.${composed.ext}`);
+        setStatus(`Downloaded ${composed.ext.toUpperCase()} file.`);
+      } catch (error) {
+        console.error(error);
+        setStatus("Export failed. Try again with PNG format.", true);
+      }
+    }
+
+    async function copyQrImageToClipboard() {
+      try {
+        if (!navigator.clipboard || typeof navigator.clipboard.write !== "function" || typeof ClipboardItem === "undefined") {
+          setStatus("This browser does not support image clipboard copy. Use Download QR instead.", true);
+          return;
+        }
+
+        const rawBlob = await qrCode.getRawData("png");
+        const composed = await composeFramedImage(rawBlob, state.frame, "png");
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            "image/png": composed.blob
+          })
+        ]);
+        setStatus("QR image copied to clipboard.");
+      } catch (error) {
+        console.error(error);
+        setStatus("Image copy requires clipboard permission in a secure context (HTTPS or localhost).", true);
+      }
+    }
+
+    async function composeFramedImage(rawQrBlob, frame, format) {
+      const image = await blobToImage(rawQrBlob);
+      const size = image.width;
+
+      const layoutByFrame = {
+        none: { pad: 0, top: 0, bottom: 0, border: 0, bg: state.transparentBackground ? null : state.backgroundColor },
+        classic: { pad: 32, top: 10, bottom: 70, border: 8, bg: "#ffffff" },
+        neon: { pad: 38, top: 56, bottom: 20, border: 10, bg: "#f4fffb" },
+        ticket: { pad: 34, top: 12, bottom: 72, border: 8, bg: "#fff8eb" },
+        device: { pad: 50, top: 24, bottom: 56, border: 20, bg: "#12161c" },
+        focus: { pad: 36, top: 52, bottom: 18, border: 6, bg: "#ffffff" },
+        badge: { pad: 36, top: 16, bottom: 68, border: 10, bg: "#fff7f1" }
+      };
+
+      const l = layoutByFrame[frame] || layoutByFrame.none;
+      const w = size + l.pad * 2;
+      const h = size + l.pad * 2 + l.top + l.bottom;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+
+      if (l.bg) {
+        ctx.fillStyle = l.bg;
+        ctx.fillRect(0, 0, w, h);
+      }
+
+      const qrX = l.pad;
+      const qrY = l.pad + l.top;
+
+      if (frame !== "none") {
+        drawFrame(ctx, frame, { x: 0, y: 0, w, h, qrX, qrY, size, l });
+      }
+
+      ctx.drawImage(image, qrX, qrY, size, size);
+
+      const outBlob = await canvasToBlob(canvas, format === "jpeg" ? "image/jpeg" : "image/png", 0.94);
+      return { blob: outBlob, ext: format === "jpeg" ? "jpg" : "png" };
+    }
+
+    function drawFrame(ctx, frame, b) {
+      if (frame === "classic") {
+        strokeRoundedRect(ctx, b.qrX - 18, b.qrY - 18, b.size + 36, b.size + 36, 18, "#101319", 8);
+        drawPill(ctx, b.w / 2 - 120, b.h - 58, 240, 40, "#101319", "SCAN ME", "#ffffff");
+      }
+
+      if (frame === "neon") {
+        strokeRoundedRect(ctx, b.qrX - 22, b.qrY - 22, b.size + 44, b.size + 44, 34, "#006f62", 10);
+        drawPill(ctx, b.w / 2 - 128, 14, 256, 40, "#006f62", "OPEN NOW", "#ffffff");
+      }
+
+      if (frame === "ticket") {
+        strokeRoundedRect(ctx, b.qrX - 18, b.qrY - 18, b.size + 36, b.size + 36, 16, "#c3492b", 8);
+        ctx.fillStyle = "#fff8eb";
+        ctx.beginPath();
+        ctx.arc(8, b.h / 2, 18, 0, Math.PI * 2);
+        ctx.arc(b.w - 8, b.h / 2, 18, 0, Math.PI * 2);
+        ctx.fill();
+        drawPill(ctx, b.w / 2 - 138, b.h - 58, 276, 40, "#c3492b", "ENTRY PASS", "#ffffff");
+      }
+
+      if (frame === "device") {
+        fillRoundedRect(ctx, b.qrX - 26, b.qrY - 26, b.size + 52, b.size + 52, 34, "#12161c");
+        ctx.fillStyle = "#1e2631";
+        fillRoundedRect(ctx, b.w / 2 - 90, b.qrY - 12, 180, 8, 999, "#1e2631");
+        drawPill(ctx, b.w / 2 - 130, b.h - 50, 260, 34, "#1e2631", "tap to open", "#98a9be");
+      }
+
+      if (frame === "focus") {
+        ctx.setLineDash([14, 9]);
+        strokeRoundedRect(ctx, b.qrX - 18, b.qrY - 18, b.size + 36, b.size + 36, 4, "#101319", 6);
+        ctx.setLineDash([]);
+        drawPill(ctx, b.w / 2 - 132, 12, 264, 38, "#ffffff", "AIM CAMERA", "#101319", "#101319");
+      }
+
+      if (frame === "badge") {
+        strokeRoundedRect(ctx, b.qrX - 20, b.qrY - 20, b.size + 40, b.size + 40, 28, "#c3492b", 10);
+        drawPill(ctx, b.w / 2 - 144, b.h - 58, 288, 40, "#ffffff", "SCAN TO VIEW", "#c3492b", "#c3492b");
+      }
+    }
+
+    function fillRoundedRect(ctx, x, y, w, h, r, fill) {
+      const rr = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + rr, y);
+      ctx.arcTo(x + w, y, x + w, y + h, rr);
+      ctx.arcTo(x + w, y + h, x, y + h, rr);
+      ctx.arcTo(x, y + h, x, y, rr);
+      ctx.arcTo(x, y, x + w, y, rr);
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+    }
+
+    function strokeRoundedRect(ctx, x, y, w, h, r, stroke, lineWidth) {
+      const rr = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + rr, y);
+      ctx.arcTo(x + w, y, x + w, y + h, rr);
+      ctx.arcTo(x + w, y + h, x, y + h, rr);
+      ctx.arcTo(x, y + h, x, y, rr);
+      ctx.arcTo(x, y, x + w, y, rr);
+      ctx.closePath();
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = stroke;
+      ctx.stroke();
+    }
+
+    function drawPill(ctx, x, y, w, h, fill, text, textColor, stroke = null) {
+      fillRoundedRect(ctx, x, y, w, h, h / 2, fill);
+      if (stroke) {
+        strokeRoundedRect(ctx, x, y, w, h, h / 2, stroke, 3);
+      }
+      ctx.fillStyle = textColor;
+      ctx.font = `${Math.floor(h * 0.42)}px Space Grotesk`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(text).toUpperCase(), x + w / 2, y + h / 2 + 1);
+    }
+
+    function resetAll() {
+      Object.assign(state, {
+        type: "url",
+        frame: "classic",
+        dotStyle: "rounded",
+        cornerSquareStyle: "extra-rounded",
+        cornerDotStyle: "dot",
+        errorLevel: "Q",
+        foregroundColor: "#111111",
+        backgroundColor: "#ffffff",
+        gradientEnabled: false,
+        gradientStart: "#111111",
+        gradientEnd: "#c3492b",
+        gradientType: "linear",
+        gradientRotation: 45,
+        size: 800,
+        margin: 12,
+        transparentBackground: false,
+        logoData: logoPresets.find((x) => x.key === "scan").data,
+        logoSize: 26,
+        logoMargin: 4,
+        hideBackgroundDots: true,
+        selectedLogoKey: "scan"
+      });
+
+      for (const key of Object.keys(valuesByType)) {
+        valuesByType[key] = { ...contentTypes[key].defaults };
+      }
+
+      renderTypeButtons();
+      renderDynamicFields();
+      markActiveFrameButton();
+      markActiveLogoButton();
+      applyFrameToPreview();
+      syncControlsFromState();
+      updateQr();
+      setStatus("All settings reset to defaults.");
+    }
+
+    function randomizeStyle() {
+      const dots = ["square", "dots", "rounded", "classy", "classy-rounded", "extra-rounded"];
+      const corners = ["square", "dot", "extra-rounded"];
+      const frame = framePresets[Math.floor(Math.random() * framePresets.length)].key;
+      const dot = dots[Math.floor(Math.random() * dots.length)];
+      const cs = corners[Math.floor(Math.random() * corners.length)];
+      const cd = ["square", "dot"][Math.floor(Math.random() * 2)];
+      const c1 = randomColor();
+      const c2 = randomColor();
+
+      Object.assign(state, {
+        frame,
+        dotStyle: dot,
+        cornerSquareStyle: cs,
+        cornerDotStyle: cd,
+        gradientEnabled: true,
+        gradientType: Math.random() > 0.5 ? "linear" : "radial",
+        gradientRotation: Math.floor(Math.random() * 360),
+        gradientStart: c1,
+        gradientEnd: c2,
+        foregroundColor: c1,
+        backgroundColor: "#ffffff"
+      });
+
+      syncControlsFromState();
+      markActiveFrameButton();
+      applyFrameToPreview();
+      updateQr();
+      setStatus("Generated a random style.");
+    }
+
+    function normalizeUrl(url) {
+      if (!url) {
+        return "https://example.com";
+      }
+      const raw = url.trim();
+      if (/^[a-zA-Z]+:/.test(raw)) {
+        return raw;
+      }
+      return `https://${raw}`;
+    }
+
+    function escWifi(value) {
+      return String(value).replace(/[\\;,:\"]/g, "\\$&");
+    }
+
+    function digitsOnly(value) {
+      return String(value).replace(/[^\d]/g, "");
+    }
+
+    function enc(value) {
+      return encodeURIComponent(value || "");
+    }
+
+    function toIcsDate(inputValue) {
+      if (!inputValue) {
+        const now = new Date();
+        return now.toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
+      }
+      const d = new Date(inputValue);
+      return d.toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
+    }
+
+    function localDateInput(offsetHours) {
+      const d = new Date(Date.now() + offsetHours * 60 * 60 * 1000);
+      const p = (n) => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+    }
+
+    function setValue(id, value) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = value;
+      }
+    }
+
+    function setChecked(id, value) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.checked = Boolean(value);
+      }
+    }
+
+    function randomColor() {
+      const x = Math.floor(Math.random() * 16777215).toString(16);
+      return `#${x.padStart(6, "0")}`;
+    }
+
+    function fileToDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function blobToImage(blob) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(img);
+        };
+        img.onerror = (err) => {
+          URL.revokeObjectURL(url);
+          reject(err);
+        };
+        img.src = url;
+      });
+    }
+
+    function canvasToBlob(canvas, type, quality) {
+      return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            reject(new Error("Canvas toBlob failed"));
+            return;
+          }
+          resolve(blob);
+        }, type, quality);
+      });
+    }
+
+    function triggerDownload(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function svgLogo(text, bg, fg) {
+      const safe = String(text).toUpperCase().slice(0, 6);
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'><rect width='320' height='320' rx='54' fill='${bg}'/><rect x='14' y='14' width='292' height='292' rx='44' fill='none' stroke='${fg}' stroke-width='10'/><text x='160' y='176' text-anchor='middle' font-family='Verdana, sans-serif' font-size='72' font-weight='700' fill='${fg}'>${safe}</text></svg>`;
+      return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
