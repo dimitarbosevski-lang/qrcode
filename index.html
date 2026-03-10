@@ -132,9 +132,9 @@
     }
 
     .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
       gap: 12px;
       margin-bottom: 16px;
     }
@@ -163,7 +163,8 @@
     .top-actions {
       display: flex;
       gap: 8px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      align-items: center;
     }
 
     .btn {
@@ -176,6 +177,7 @@
       font-weight: 600;
       font-size: 0.82rem;
       transition: 0.2s ease;
+      white-space: nowrap;
     }
 
     .btn:hover {
@@ -300,11 +302,23 @@
     }
 
     .check {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.84rem;
+      gap: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.25;
       color: var(--ink);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .check input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: var(--accent);
+      flex: 0 0 auto;
     }
 
     .frames,
@@ -377,6 +391,7 @@
       --banner-size: 0px;
       --frame-bg: #fff;
       --frame-border: #151515;
+      --frame-accent: #cf0018;
       --frame-radius: 18px;
       width: min(360px, 100%);
       background: var(--frame-bg);
@@ -472,13 +487,13 @@
     .frame-classic {
       --pad: 16px;
       --frame-bg: #fff;
-      --frame-border: #101319;
+      --frame-border: var(--frame-accent);
       --frame-radius: 10px;
     }
 
     .frame-classic .banner-bottom {
       display: inline-flex;
-      background: #101319;
+      background: var(--frame-accent);
       color: #fff;
       min-width: 138px;
     }
@@ -486,21 +501,21 @@
     .frame-neon {
       --pad: 18px;
       --frame-bg: linear-gradient(145deg, #ffffff, #f6f7fb);
-      --frame-border: #cf0018;
+      --frame-border: var(--frame-accent);
       --frame-radius: 26px;
       border-width: 6px;
     }
 
     .frame-neon .banner-top {
       display: inline-flex;
-      background: #101319;
+      background: var(--frame-accent);
       color: #fff;
     }
 
     .frame-ticket {
       --pad: 20px;
       --frame-bg: #ffffff;
-      --frame-border: #cf0018;
+      --frame-border: var(--frame-accent);
       --frame-radius: 14px;
     }
 
@@ -512,7 +527,7 @@
       height: 22px;
       border-radius: 50%;
       background: var(--bg);
-      border: 3px solid #cf0018;
+      border: 3px solid var(--frame-accent);
       top: calc(50% - 11px);
     }
 
@@ -526,7 +541,7 @@
 
     .frame-ticket .banner-bottom {
       display: inline-flex;
-      background: #cf0018;
+      background: var(--frame-accent);
       color: #fff;
     }
 
@@ -565,7 +580,7 @@
     .frame-focus {
       --pad: 20px;
       --frame-bg: #ffffff;
-      --frame-border: #101319;
+      --frame-border: var(--frame-accent);
       --frame-radius: 4px;
       border-style: dashed;
       border-width: 3px;
@@ -574,14 +589,14 @@
     .frame-focus .banner-top {
       display: inline-flex;
       background: #ffffff;
-      border: 2px solid #101319;
-      color: #101319;
+      border: 2px solid var(--frame-accent);
+      color: var(--frame-accent);
     }
 
     .frame-badge {
       --pad: 18px;
       --frame-bg: radial-gradient(circle at 20% 15%, #fff5f7 0%, #ffffff 56%);
-      --frame-border: #cf0018;
+      --frame-border: var(--frame-accent);
       --frame-radius: 20px;
       border-width: 5px;
     }
@@ -589,8 +604,8 @@
     .frame-badge .banner-bottom {
       display: inline-flex;
       background: #ffffff;
-      color: #cf0018;
-      border: 2px solid #cf0018;
+      color: var(--frame-accent);
+      border: 2px solid var(--frame-accent);
       font-size: 0.7rem;
       letter-spacing: 0.1em;
     }
@@ -609,6 +624,14 @@
     @media (max-width: 1180px) {
       .shell {
         grid-template-columns: 1fr;
+      }
+
+      .header {
+        grid-template-columns: 1fr;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
       }
 
       .site-header,
@@ -777,6 +800,10 @@
           <div>
             <label class="label" for="backgroundColor">Background</label>
             <input id="backgroundColor" type="color" value="#ffffff" />
+          </div>
+          <div>
+            <label class="label" for="frameColor">Frame color</label>
+            <input id="frameColor" type="color" value="#cf0018" />
           </div>
         </div>
 
@@ -1075,6 +1102,7 @@
           state.cornerDotStyle = "dot";
           state.foregroundColor = "#111111";
           state.backgroundColor = "#ffffff";
+          state.frameColor = "#cf0018";
           state.gradientEnabled = false;
           state.logoData = logoPresets.find((x) => x.key === "iw-transparent").data;
           state.selectedLogoKey = "iw-transparent";
@@ -1092,6 +1120,7 @@
           state.dotStyle = "classy-rounded";
           state.cornerSquareStyle = "dot";
           state.cornerDotStyle = "dot";
+          state.frameColor = "#cf0018";
           state.gradientEnabled = true;
           state.gradientStart = "#101319";
           state.gradientEnd = "#cf0018";
@@ -1110,6 +1139,7 @@
           state.cornerDotStyle = "square";
           state.foregroundColor = "#1f2430";
           state.backgroundColor = "#ffffff";
+          state.frameColor = "#cf0018";
           state.gradientEnabled = true;
           state.gradientStart = "#101319";
           state.gradientEnd = "#cf0018";
@@ -1126,6 +1156,7 @@
           state.dotStyle = "dots";
           state.cornerSquareStyle = "dot";
           state.cornerDotStyle = "dot";
+          state.frameColor = "#cf0018";
           state.gradientEnabled = true;
           state.gradientType = "linear";
           state.gradientRotation = 130;
@@ -1150,6 +1181,7 @@
       errorLevel: "Q",
       foregroundColor: "#cf0018",
       backgroundColor: "#ffffff",
+      frameColor: "#cf0018",
       gradientEnabled: true,
       gradientStart: "#4f1024",
       gradientEnd: "#cf0018",
@@ -1174,23 +1206,12 @@
       payloadBytes: document.getElementById("payloadBytes"),
       previewStageWrap: document.getElementById("previewStageWrap"),
       previewStage: document.getElementById("previewStage"),
+      qrMount: document.getElementById("qrMount"),
       bannerTop: document.getElementById("bannerTop"),
       bannerBottom: document.getElementById("bannerBottom")
     };
 
-    const qrCode = new QRCodeStyling({
-      width: state.size,
-      height: state.size,
-      data: "https://iwconnect.com/",
-      margin: state.margin,
-      qrOptions: { errorCorrectionLevel: state.errorLevel },
-      dotsOptions: { type: state.dotStyle, color: state.foregroundColor },
-      cornersSquareOptions: { type: state.cornerSquareStyle, color: state.foregroundColor },
-      cornersDotOptions: { type: state.cornerDotStyle, color: state.foregroundColor },
-      backgroundOptions: { color: state.backgroundColor }
-    });
-
-    qrCode.append(document.getElementById("qrMount"));
+    let qrCode = null;
 
     renderTypeButtons();
     renderFrameButtons();
@@ -1226,6 +1247,10 @@
       });
       document.getElementById("backgroundColor").addEventListener("input", (e) => {
         state.backgroundColor = e.target.value;
+        updateQr();
+      });
+      document.getElementById("frameColor").addEventListener("input", (e) => {
+        state.frameColor = e.target.value;
         updateQr();
       });
       document.getElementById("gradientEnabled").addEventListener("change", (e) => {
@@ -1447,6 +1472,7 @@
       setValue("errorLevel", state.errorLevel);
       setValue("foregroundColor", state.foregroundColor);
       setValue("backgroundColor", state.backgroundColor);
+      setValue("frameColor", state.frameColor);
       setChecked("gradientEnabled", state.gradientEnabled);
       setValue("gradientStart", state.gradientStart);
       setValue("gradientEnd", state.gradientEnd);
@@ -1463,6 +1489,7 @@
     function applyFrameToPreview() {
       refs.previewStage.className = `preview-stage frame-${state.frame}${state.transparentBackground ? " transparent-output" : ""}`;
       refs.previewStageWrap.classList.toggle("show-transparency", state.transparentBackground);
+      refs.previewStage.style.setProperty("--frame-accent", state.frameColor);
       const frame = framePresets.find((f) => f.key === state.frame) || framePresets[0];
       refs.bannerTop.textContent = frame.top;
       refs.bannerBottom.textContent = frame.bottom;
@@ -1491,11 +1518,9 @@
       return { color: state.foregroundColor };
     }
 
-    function updateQr() {
-      const payload = buildPayload();
-      const colorOptions = buildColorOptions();
-
-      qrCode.update({
+    function mountQr(payload, colorOptions) {
+      refs.qrMount.innerHTML = "";
+      qrCode = new QRCodeStyling({
         width: state.size,
         height: state.size,
         data: payload,
@@ -1526,6 +1551,13 @@
           color: state.transparentBackground ? "transparent" : state.backgroundColor
         }
       });
+      qrCode.append(refs.qrMount);
+    }
+
+    function updateQr() {
+      const payload = buildPayload();
+      const colorOptions = buildColorOptions();
+      mountQr(payload, colorOptions);
 
       refs.payloadBytes.textContent = `${payload.length} chars`;
       applyFrameToPreview();
@@ -1536,6 +1568,9 @@
       const fileBase = `iwconnect-qr-${state.type}-${state.frame}`;
 
       try {
+        if (!qrCode) {
+          updateQr();
+        }
         if (format === "svg" && state.frame === "none") {
           await qrCode.download({ extension: "svg", name: fileBase });
           setStatus("Downloaded SVG QR.");
@@ -1561,6 +1596,9 @@
         if (!navigator.clipboard || typeof navigator.clipboard.write !== "function" || typeof ClipboardItem === "undefined") {
           setStatus("This browser does not support image clipboard copy. Use Download QR instead.", true);
           return;
+        }
+        if (!qrCode) {
+          updateQr();
         }
 
         const rawBlob = await qrCode.getRawData("png");
@@ -1621,27 +1659,29 @@
     }
 
     function drawFrame(ctx, frame, b) {
+      const accent = state.frameColor;
+
       if (frame === "classic") {
         const rect = { x: b.qrX - 18, y: b.qrY - 18, w: b.size + 36, h: b.size + 36 };
-        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 18, "#101319", 8);
-        drawPill(ctx, b.w / 2 - 120, rect.y + rect.h - 20, 240, 40, "#101319", "SCAN NOW", "#ffffff");
+        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 18, accent, 8);
+        drawPill(ctx, b.w / 2 - 120, rect.y + rect.h - 20, 240, 40, accent, "SCAN NOW", "#ffffff");
       }
 
       if (frame === "neon") {
         const rect = { x: b.qrX - 22, y: b.qrY - 22, w: b.size + 44, h: b.size + 44 };
-        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 34, "#cf0018", 10);
-        drawPill(ctx, b.w / 2 - 128, rect.y - 20, 256, 40, "#101319", "OPEN NOW", "#ffffff");
+        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 34, accent, 10);
+        drawPill(ctx, b.w / 2 - 128, rect.y - 20, 256, 40, accent, "OPEN NOW", "#ffffff");
       }
 
       if (frame === "ticket") {
         const rect = { x: b.qrX - 18, y: b.qrY - 18, w: b.size + 36, h: b.size + 36 };
-        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 16, "#cf0018", 8);
+        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 16, accent, 8);
         ctx.fillStyle = b.transparentOutput ? "rgba(0,0,0,0)" : "#f3f5f9";
         ctx.beginPath();
         ctx.arc(rect.x, rect.y + rect.h / 2, 18, 0, Math.PI * 2);
         ctx.arc(rect.x + rect.w, rect.y + rect.h / 2, 18, 0, Math.PI * 2);
         ctx.fill();
-        drawPill(ctx, b.w / 2 - 138, rect.y + rect.h - 20, 276, 40, "#cf0018", "ENTRY PASS", "#ffffff");
+        drawPill(ctx, b.w / 2 - 138, rect.y + rect.h - 20, 276, 40, accent, "ENTRY PASS", "#ffffff");
       }
 
       if (frame === "device") {
@@ -1655,15 +1695,15 @@
       if (frame === "focus") {
         const rect = { x: b.qrX - 18, y: b.qrY - 18, w: b.size + 36, h: b.size + 36 };
         ctx.setLineDash([14, 9]);
-        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 4, "#101319", 6);
+        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 4, accent, 6);
         ctx.setLineDash([]);
-        drawPill(ctx, b.w / 2 - 132, rect.y - 19, 264, 38, "#ffffff", "AIM CAMERA", "#101319", "#101319");
+        drawPill(ctx, b.w / 2 - 132, rect.y - 19, 264, 38, "#ffffff", "AIM CAMERA", accent, accent);
       }
 
       if (frame === "badge") {
         const rect = { x: b.qrX - 20, y: b.qrY - 20, w: b.size + 40, h: b.size + 40 };
-        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 28, "#cf0018", 10);
-        drawPill(ctx, b.w / 2 - 144, rect.y + rect.h - 20, 288, 40, "#ffffff", "SCAN TO VIEW", "#cf0018", "#cf0018");
+        strokeRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 28, accent, 10);
+        drawPill(ctx, b.w / 2 - 144, rect.y + rect.h - 20, 288, 40, "#ffffff", "SCAN TO VIEW", accent, accent);
       }
     }
 
@@ -1716,6 +1756,7 @@
         errorLevel: "Q",
         foregroundColor: "#cf0018",
         backgroundColor: "#ffffff",
+        frameColor: "#cf0018",
         gradientEnabled: true,
         gradientStart: "#4f1024",
         gradientEnd: "#cf0018",
@@ -1766,6 +1807,7 @@
         gradientStart: c1,
         gradientEnd: c2,
         foregroundColor: c1,
+        frameColor: c2,
         backgroundColor: "#ffffff"
       });
 
